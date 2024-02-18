@@ -39,12 +39,12 @@ class DBStorage:
         from models.review import Review
         dictionary = {}
         instances = []
-        classes = (BaseModel, User, Place, State, City, Amenity, Review)
+        classes = [BaseModel, User, Place, State, City, Amenity, Review]
         if cls is None:
             for cla in classes:
                 instances.extend(self.__session.query(cla).all())
         else:
-            instances = self.__session.query(cla).all()
+            instances = self.__session.query(cls).all()
         for instance in instances:
             key = instance.to_dict()['__class__'] + '.' + instance.id
             dictionary[key] = instance
