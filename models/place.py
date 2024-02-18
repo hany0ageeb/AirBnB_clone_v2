@@ -1,8 +1,25 @@
 #!/usr/bin/python3
 """ Place Module for HBNB project """
 from models.base_model import BaseModel, Base
-from sqlalchemy import Column, String, Integer, ForeignKey, Float
+from models.amenity import Amenity
+from sqlalchemy import Column, String, Integer, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
+
+
+place_amenity = Table(
+        'place_amenity',
+        Base.metadata,
+        Column(
+            'place_id',
+            ForeignKey('places.id'),
+            primary_key=True,
+            nullable=False),
+        Column(
+            'amenity_id',
+            ForeignKey('amenities.id'),
+            primary_key=True,
+            nullable=False)
+)
 
 
 class Place(BaseModel, Base):
@@ -32,4 +49,22 @@ class Place(BaseModel, Base):
             'Review',
             back_populates='place',
             cascade='all,delete')
+    amenities = relationsship(
+            'Amenity',
+            secondary=place_amenity,
+            back_populates='place_amenities',
+            viewonly=False)
     amenity_ids = []
+
+    @property
+    def amenities(self):
+        """returns the list of Amenity instances based on the attribute"""
+        pass
+
+    @amenities.setter
+    def amenities(self, amenity):
+        """This method should accept only Amenity
+        object, otherwise, do nothing."""
+        if type(amenity) is Amenity:
+            if amenity.id not in amenity_ids:
+                amenity_ids.append(amenity.id)
