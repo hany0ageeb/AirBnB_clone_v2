@@ -80,3 +80,9 @@ class BaseModel:
         if '_sa_instance_state' in dictionary:
             del dictionary['_sa_instance_state']
         return dictionary
+
+    def add_attributes(self, **kwargs):
+        """add attributes to instance"""
+        for key, value in kwargs.items():
+            if key not in ('id','__class__'):
+                setattr(self, key, value)

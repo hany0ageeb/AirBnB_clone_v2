@@ -125,6 +125,7 @@ class HBNBCommand(cmd.Cmd):
         new_instance = HBNBCommand.classes[cls_name]()
         parameters = args.split(' ')[1:]
         if parameters:
+            temp_dict = {}
             for parameter in parameters:
                 equal_idx = parameter.find('=')
                 if equal_idx >= 0:
@@ -134,17 +135,18 @@ class HBNBCommand(cmd.Cmd):
                         if value[0] == '"':
                             value = value.strip('"').replace('_', ' ')
                             value = value.replace('"', '\"')
-                            setattr(new_instance, key, value)
+                            temp_dict[key] = value
                         elif '.' in value:
                             try:
-                                setattr(new_instance, key, float(value))
+                                temp_dict[key] = float(value)
                             except ValueError:
                                 pass
                         else:
                             try:
-                                setattr(new_instance, key, int(value))
+                                temp_dict[key] = int(value)
                             except ValueError:
                                 pass
+            new_instance.add_attributes(**temp_dict)
         new_instance.save()
         print(new_instance.id)
 
@@ -175,10 +177,10 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
             return
 
-        key = c_name + "." + c_id
-        try:
-            print(storage._FileStorage__objects[key])
-        except KeyError:
+        instance = storage.find_by_id(c_id, HBNBCommand.classes[c_name])
+        if instance:
+            print(instance)
+        else:
             print("** no instance found **")
 
     def help_show(self):
@@ -193,25 +195,20 @@ class HBNBCommand(cmd.Cmd):
         c_id = new[2]
         if c_id and ' ' in c_id:
             c_id = c_id.partition(' ')[0]
-
         if not c_name:
             print("** class name missing **")
             return
-
         if c_name not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-
         if not c_id:
             print("** instance id missing **")
             return
-
-        key = c_name + "." + c_id
-
-        try:
-            del(storage.all()[key])
+        obj = storage.find_by_id(c_id, HBNBCommand.classes[c_name])
+        if obj:
+            storage.delete(obj)
             storage.save()
-        except KeyError:
+        else:
             print("** no instance found **")
 
     def help_destroy(self):
@@ -243,11 +240,13 @@ class HBNBCommand(cmd.Cmd):
 
     def do_count(self, args):
         """Count current number of class instances"""
-        count = 0
-        for k, v in storage._FileStorage__objects.items():
-            if args == k.split('.')[0]:
-                count += 1
-        print(count)
+        if not args:
+            print("** class name missing **")
+            return
+        if args in HBNBCommand.classes:
+            print(storage.count(HBNBCommand.classes[args]))
+        else:
+            print("** class doesn't exist **")
 
     def help_count(self):
         """ """

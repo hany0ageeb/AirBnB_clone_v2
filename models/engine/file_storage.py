@@ -18,6 +18,14 @@ class FileStorage:
                 tmp[key] = val
         return tmp
 
+    def find_by_id(self, id, cls):
+        if id and cls:
+            key = cls.__name__ + '.' + id
+            if key in FileStorage.__objects:
+                return FileStorage.__objects[key]
+            return None
+        return None
+
     def new(self, obj):
         """Adds new object to storage dictionary"""
         FileStorage.__objects.update(
@@ -64,3 +72,11 @@ class FileStorage:
             key = obj.to_dict()['__class__'] + '.' + obj.id
             if key in FileStorage.__objects:
                 del FileStorage.__objects[key]
+    
+    def count(self, cls):
+        count = 0
+        if cls:
+            for obj in FileStorage.__objects.values():
+                if type(obj) is cls:
+                    count += 1
+        return count

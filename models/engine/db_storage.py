@@ -50,6 +50,12 @@ class DBStorage:
             dictionary[key] = instance
         return dictionary
 
+    def find_by_id(self, id, cls):
+        """find by id"""
+        if id and cls:
+            return self.__session.query(cls).get(id)
+        return None
+        
     def new(self, obj):
         """add the object to the current database session"""
         self.__session.add(obj)
@@ -77,3 +83,8 @@ class DBStorage:
                 bind=self.__engine,
                 expire_on_commit=False)
         self.__session = scoped_session(session_factory)
+    
+    def count(self, cls):
+        if cls:
+            return self.__session.query(self).count
+        return 0
