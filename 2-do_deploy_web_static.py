@@ -43,7 +43,7 @@ def do_deploy(archive_path):
         ret_val = False
     if ret_val and result.failed:
         ret_val = False
-    result = sudo("ln -s {} /data/web_static/current".format(dest_dir))
+    result = run("ln -s {} /data/web_static/current".format(dest_dir))
     if ret_val and result.failed:
         ret_val = False
     return ret_val
