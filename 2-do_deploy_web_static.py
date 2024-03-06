@@ -15,21 +15,22 @@ def do_deploy(archive_path):
     """
     distributes an archive to your web servers
     """
-    from fabric.contrib import files
-    if not files.exists(archive_path):
+    import os.path
+    if not os.path.isfile(archive_path):
         return False
     result = put(archive_path, "/tmp/")
+    remote_archive = "/tmp/" + os.path.basename(archive_path)
     if result.failed:
         return False
     dest_dir = "/data/web_static/releases/{}/".format(
         archive_path[:archive_path.rindex('.')])
-    result = run("mkdir -p /data/web_static/releases/{}".format(dest_dir))
+    result = run("mkdir -p {}".format(dest_dir))
     if result.failed:
         return False
-    result = run("tar -xzf {} -C {}".format(archive_path, dest_dir))
+    result = sudo("tar -xzf {} -C {}".format(remote_archive, dest_dir))
     if result.failed:
         return False
-    result = run("rm {}".format(archive_path))
+    result = run("rm {}".format(remote_archive))
     ret_val = result.succeeded
     result = run("unlink /data/web_static/current")
     if ret_val and result.failed:
