@@ -1,3 +1,4 @@
+# Redo the task #0 but by using Puppet:
 file { '/data':
   ensure => 'directory',
   path   => '/data/',
