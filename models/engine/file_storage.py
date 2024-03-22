@@ -72,11 +72,29 @@ class FileStorage:
             key = obj.to_dict()['__class__'] + '.' + obj.id
             if key in FileStorage.__objects:
                 del FileStorage.__objects[key]
-    
+
     def count(self, cls):
+        """
+        counts objects of type cls or all objects of all types
+        if cls is None
+        """
         count = 0
         if cls:
             for obj in FileStorage.__objects.values():
                 if type(obj) is cls:
                     count += 1
         return count
+
+    def close(self):
+        """
+        call reload() method for deserializing the JSON file to objects
+        """
+        self.reload()
+
+    def get_cities_by_state_id(self, state_id):
+        """get cities for state_id"""
+        from models.city import City
+        return list(
+                filter(
+                    lambda city: city.state_id == state_id,
+                    self.all(City).values()))

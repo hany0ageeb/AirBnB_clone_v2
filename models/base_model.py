@@ -1,12 +1,17 @@
 #!/usr/bin/python3
 """This module defines a base class for all models in our hbnb clone"""
 import uuid
+import models
+from models.engine.db_storage import DBStorage
 from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, DateTime
 
 
-Base = declarative_base()
+if type(models.storage) is DBStorage:
+    Base = declarative_base()
+else:
+    Base = object
 
 
 class BaseModel:
@@ -32,13 +37,15 @@ class BaseModel:
             self.updated_at = datetime.now()
         else:
             if 'updated_at' in kwargs:
-                kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
+                kwargs['updated_at'] = datetime.strptime(
+                        kwargs['updated_at'],
+                        '%Y-%m-%dT%H:%M:%S.%f')
             else:
                 self.updated_at = datetime.now()
             if 'created_at' in kwargs:
-                kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
+                kwargs['created_at'] = datetime.strptime(
+                        kwargs['created_at'],
+                        '%Y-%m-%dT%H:%M:%S.%f')
             else:
                 self.created_at = datetime.now()
             if 'id' not in kwargs:
@@ -84,5 +91,5 @@ class BaseModel:
     def add_attributes(self, **kwargs):
         """add attributes to instance"""
         for key, value in kwargs.items():
-            if key not in ('id','__class__'):
+            if key not in ('id', '__class__'):
                 setattr(self, key, value)

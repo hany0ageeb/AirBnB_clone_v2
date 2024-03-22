@@ -26,7 +26,8 @@ class DBStorage:
                 pool_pre_ping=True,
                 echo=False)
         if os.getenv('HBNB_ENV') == 'test':
-            Base.metadata.drop_all(DBStorage.__engine)
+            # Base.metadata.drop_all(DBStorage.__engine)
+            Base.metadata.create_all(DBStorage.__engine)
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -39,7 +40,7 @@ class DBStorage:
         from models.review import Review
         dictionary = {}
         instances = []
-        classes = [BaseModel, User, Place, State, City, Amenity, Review]
+        classes = [User, Place, State, City, Amenity, Review]
         if cls is None:
             for cla in classes:
                 instances.extend(self.__session.query(cla).all())
@@ -52,10 +53,17 @@ class DBStorage:
 
     def find_by_id(self, id, cls):
         """find by id"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
         if id and cls:
             return self.__session.query(cls).get(id)
         return None
-        
+
     def new(self, obj):
         """add the object to the current database session"""
         self.__session.add(obj)
@@ -83,8 +91,19 @@ class DBStorage:
                 bind=self.__engine,
                 expire_on_commit=False)
         self.__session = scoped_session(session_factory)
-    
+
     def count(self, cls):
+        """counts object of cls"""
         if cls:
             return self.__session.query(self).count
         return 0
+
+    def close(self):
+        """call remove() method on the private session attribute"""
+        self.__session.remove()
+
+    def get_cities_by_state_id(self, state_id):
+        """return a list of cities of the state_id"""
+        return self.__session.query(City).filter(
+                City.state_id == state_id).order_by(
+                        City.id).all()
