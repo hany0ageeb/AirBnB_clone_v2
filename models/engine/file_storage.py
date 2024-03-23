@@ -90,11 +90,3 @@ class FileStorage:
         call reload() method for deserializing the JSON file to objects
         """
         self.reload()
-
-    def get_cities_by_state_id(self, state_id):
-        """get cities for state_id"""
-        from models.city import City
-        return list(
-                filter(
-                    lambda city: city.state_id == state_id,
-                    self.all(City).values()))

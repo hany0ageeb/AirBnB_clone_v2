@@ -101,9 +101,3 @@ class DBStorage:
     def close(self):
         """call remove() method on the private session attribute"""
         self.__session.remove()
-
-    def get_cities_by_state_id(self, state_id):
-        """return a list of cities of the state_id"""
-        return self.__session.query(City).filter(
-                City.state_id == state_id).order_by(
-                        City.id).all()

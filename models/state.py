@@ -18,7 +18,10 @@ class State(BaseModel, Base):
             return the list of City objects from storage
             linked to the current State
             """
-            return models.storage.get_cities_by_state_id(self.id)
+            from models.city import City
+            return list(filter(
+                    lambda city: city.state_id == self.id,
+                    models.storage.all(City).values()))
     else:
         __tablename__ = "states"
         name = Column("name", String(128), nullable=False)
@@ -26,3 +29,7 @@ class State(BaseModel, Base):
                 "City",
                 cascade="all,delete",
                 back_populates="state")
+
+    def __init__(self, *args, **kwargs):
+        """Initialize"""
+        super().__init__(*args, **kwargs)
