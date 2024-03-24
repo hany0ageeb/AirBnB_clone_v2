@@ -15,7 +15,7 @@ def states_list():
     from models.state import State
     return render_template(
             '7-states_list.html',
-            states=list(storage.all(State).value()))
+            states=list(storage.all(State).values()))
 
 
 @app.teardown_appcontext
