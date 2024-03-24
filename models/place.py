@@ -73,3 +73,54 @@ class Place(BaseModel, Base):
         latitude = 0.0
         longitude = 0.0
         amenity_ids = []
+
+        @property
+        def user(self):
+            """user property getter"""
+            from models import storage
+            from models.user import User
+            users = list(
+                    filter(
+                        lambda usr: usr.id == self.user_id,
+                        storage.all(User).values()))
+            if users:
+                return users[0]
+            return None
+
+        @property
+        def city(self):
+            """city property getter"""
+            from models import storage
+            from models.city import City
+            cities = list(
+                    filter(
+                        lambda cty: cty.id == self.city_id,
+                        storage.all(City).all().values()))
+            if cities:
+                return cities[0]
+            return None
+
+        @property
+        def reviews(self):
+            """review property getter"""
+            from models import storage
+            from models.review import Review
+            return list(
+                    filter(
+                        lambda review: review.amenity_id == self.id,
+                        storage.all(Review).values()
+                        ))
+
+        @property
+        def amenities(self):
+            """amenities property getter"""
+            from models import storage
+            from models.amenity import Amenity
+            return list(
+                    filter(
+                        lambda amenity: amenity.id in self.amenity_ids,
+                        storage.all(Amenity).values()))
+
+    def __init__(self, *args, **kwargs):
+        """Initialize Place"""
+        super().__init__(*args, **kwargs)

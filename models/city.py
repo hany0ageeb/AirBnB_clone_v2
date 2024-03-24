@@ -30,6 +30,29 @@ class City(BaseModel, Base):
         state_id = ""
         name = ""
 
+        @property
+        def state(self):
+            """state property getter"""
+            from models import storage
+            from models.state import State
+            states = list(
+                    filter(
+                        lambda state: state.id == self.state_id,
+                        storage.all(State).values()))
+            if states:
+                return states[0]
+            return None
+
+        @property
+        def places(self):
+            """places property getter"""
+            from models import storage
+            from models.place import Place
+            return list(
+                    filter(
+                        lambda place: place.city_id == self.id,
+                        storage.all(Place).values()))
+
     def __init__(self, *args, **kwargs):
         """initialize"""
         super().__init__(*args, **kwargs)

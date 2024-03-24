@@ -20,3 +20,33 @@ class Review(BaseModel, Base):
         place_id = ""
         user_id = ""
         text = ""
+
+        @property
+        def user(self):
+            """user property getter"""
+            from models import storage
+            from models.user import User
+            users = list(
+                    filter(
+                        lambda usr: user.id == self.user_id,
+                        storage.all(User).values()))
+            if users:
+                return users[0]
+            return None
+
+        @property
+        def place(self):
+            """place property getter"""
+            from models import storage
+            from models.place import Place
+            places = list(
+                    filter(
+                        lambda plc: plac.id == self.place_id,
+                        storage.all(Place).values()))
+            if places:
+                return places[0]
+            return None
+
+    def __init__(self, *args, **kwargs):
+        """Initialize Review"""
+        super().__init__(*args, **kwargs)
