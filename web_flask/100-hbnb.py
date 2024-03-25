@@ -20,10 +20,12 @@ def hbnb():
     """
     from models.state import State
     from models.place import Place
+    from models.amenity import Amenity
     return render_template(
             '100-hbnb.html',
             states=list(storage.all(State).values()),
-            places=list(storage.all(Place).values()))
+            places=list(storage.all(Place).values()),
+            amenities=list(storage.all(Amenity).values()))
 
 
 if __name__ == '__main__':
