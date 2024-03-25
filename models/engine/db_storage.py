@@ -20,15 +20,14 @@ class DBStorage:
                port=3306,
                username=os.getenv('HBNB_MYSQL_USER'),
                password=os.getenv('HBNB_MYSQL_PWD'),
-               database=os.getenv('HBNB_MYSQL_DB'),
-               query={'charset': 'latin1'})
+               database=os.getenv('HBNB_MYSQL_DB'))
         DBStorage.__engine = create_engine(
                 conn_url,
                 pool_pre_ping=True,
                 echo=False)
         if os.getenv('HBNB_ENV') == 'test':
-            # Base.metadata.drop_all(DBStorage.__engine)
-            Base.metadata.create_all(DBStorage.__engine)
+            Base.metadata.drop_all(DBStorage.__engine)
+            # Base.metadata.create_all(DBStorage.__engine)
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -91,7 +90,8 @@ class DBStorage:
         session_factory = sessionmaker(
                 bind=self.__engine,
                 expire_on_commit=False)
-        self.__session = scoped_session(session_factory)
+        Session = scoped_session(session_factory)
+        self.__session = Session()
 
     def count(self, cls):
         """counts object of cls"""
@@ -101,4 +101,4 @@ class DBStorage:
 
     def close(self):
         """call remove() method on the private session attribute"""
-        self.__session.remove()
+        self.__session.close()
