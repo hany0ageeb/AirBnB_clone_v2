@@ -20,7 +20,8 @@ class DBStorage:
                port=3306,
                username=os.getenv('HBNB_MYSQL_USER'),
                password=os.getenv('HBNB_MYSQL_PWD'),
-               database=os.getenv('HBNB_MYSQL_DB'))
+               database=os.getenv('HBNB_MYSQL_DB'),
+               query={'charset': 'latin1'})
         DBStorage.__engine = create_engine(
                 conn_url,
                 pool_pre_ping=True,

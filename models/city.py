@@ -11,13 +11,13 @@ class City(BaseModel, Base):
     """ The city class, contains state ID and name """
     if type(models.storage) is DBStorage:
         __tablename__ = "cities"
-        state_id = Column(
-                "state_id",
-                ForeignKey("states.id"),
-                nullable=False)
         name = Column(
                 "name",
                 String(128),
+                nullable=False)
+        state_id = Column(
+                "state_id",
+                ForeignKey("states.id"),
                 nullable=False)
         state = relationship(
                 'State',
@@ -27,8 +27,8 @@ class City(BaseModel, Base):
                 back_populates='city',
                 cascade='all,delete')
     else:
-        state_id = ""
         name = ""
+        state_id = ""
 
         @property
         def state(self):
